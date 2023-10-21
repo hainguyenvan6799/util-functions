@@ -142,3 +142,105 @@ function checkUniqueDropdownField(fieldsTextDropdown: Dropdown[], element: Dropd
       fieldsTextDropdown.forEach((dropdown) => dropdown.setItems(pluginSettings.allOptionsOfFieldText));
     }
   }
+
+// Chúng ta có 3 dropdown select options, danh sách option của 3 dropdown giống nhau, chúng ta muốn rằng khi chọn 1 option 
+// , Option đó sẽ không xuất hiện ở hai dropdown còn lại.
+// Tham khảo plugin Bulk status update 
+
+
+export function clone(input: any) {
+  if (input === null || typeof input !== 'object') {
+    return input;
+  }
+  const initialOutput = Array.isArray(input) ? [] : {};
+  return Object.keys(input).reduce((acc, key) => {
+    acc[key] = clone(input[key]);
+    return acc;
+  }, initialOutput);
+}
+
+  async function fetchAsyncDom(parentSelector, childSelector) {
+    const getDom = (resolve) => {
+      const parent = document.querySelectorAll(parentSelector);
+      const parentDom = [...parent].find(v => !v.style.display);
+      if (parentDom) {
+        const childRent = parentDom.querySelectorAll(childSelector);
+        return resolve(childRent);
+      }
+      setTimeout(() => getDom(resolve), 500);
+    };
+    return new Promise((resolve, reject) =>getDom(resolve));
+  }
+
+  function getLabelForFieldCode(object, fieldCode, arr = []) {
+    if (object && object.code === fieldCode) {
+        arr.push(object.label);
+        return arr;
+    }
+  
+    for (const property in object) {
+      if (Object.prototype.hasOwnProperty.call(object, property)) {
+        typeof object[property] === 'object' &&
+          getLabelForFieldCode(object[property], fieldCode, arr);
+      }
+    }
+    return arr;
+  }
+
+  // lấy hoán vị mảng
+  // ví dụ:
+  // Cho mảng [1,2,3] ==> kết quả: [1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1]
+  const permuteTest = (result, arr, permutation, used) => {
+  if (permutation.length === arr.length) {
+    result.push([...permutation].join(' '));
+    return;
+  }
+  for (let i = 0; i < arr.length; i++) {
+    if (!used[i]) {
+      used[i] = true;
+      permutation.push(arr[i]);
+      permuteTest(result, arr, permutation, used);
+      used[i] = false;
+      permutation.pop();
+    }
+  }
+  return result;
+}
+
+// lấy n phần tử bất kì trong mảng:
+const getCombo = function*(elements, length) {
+  for (let i = 0; i < elements.length; i++) {
+    if (length === 1) {
+      yield [elements[i]];
+    } else {
+      let remaining = getCombo(elements.slice(i + 1, elements.length), length - 1);
+      for (let next of remaining) {
+        yield [elements[i], ...next];
+      }
+    }
+  };
+}
+// use:
+const arr = getCombo([1,2,3], 2);
+for (const item of arr) {
+  console.log({item});
+}
+//result: [1,2], [1,3], [2,3]
+
+const isAPointInsideARect = (rectangle, point) => {
+  // (x,y): toạ độ của điểm bắt đầu.
+  // point: toạ độ của 1 điểm bất kỳ
+  const {
+    x, y, width, height
+  } = rectangle;
+  return (
+    ((point.x > x && point.x < x + width) ||
+      (point.x < x && point.x > x + width)) &&
+    ((point.y > y && point.y < y + height) ||
+      (point.y < y && point.y > y + height))
+  );
+}
+
+document.addEventListener("fullscreenchange", () => {
+  // Do something
+});
