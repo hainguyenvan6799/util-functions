@@ -244,3 +244,11 @@ const isAPointInsideARect = (rectangle, point) => {
 document.addEventListener("fullscreenchange", () => {
   // Do something
 });
+
+export function getUnicodeEscape(character: string) {
+  return '\\u' + character.charCodeAt(0).toString(16).padStart(4, '0');
+}
+
+export function decodeUnicodeEscape(unicodeEscape: string) {
+  return String.fromCharCode(parseInt(unicodeEscape.substring(2), 16));
+}
